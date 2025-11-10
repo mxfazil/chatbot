@@ -3,6 +3,7 @@ const http = require('http');
 const WebSocket = require('ws');
 const dotenv = require('dotenv');
 const { fetch } = require('undici');
+const path = require('path');
 
 dotenv.config();
 
@@ -55,6 +56,11 @@ app.get('/api/tts-test', async (req, res) => {
 
 // If you build the client and put the dist in client/dist, serve static files
 app.use(express.static('client/dist'));
+
+// Add fallback for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'client/dist/index.html'));
+});
 
 // TTS proxy endpoint: accepts { text, format } and forwards to OpenAI TTS endpoint
 // Returns audio stream (audio/mpeg by default)
