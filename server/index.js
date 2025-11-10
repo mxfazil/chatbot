@@ -55,11 +55,13 @@ app.get('/api/tts-test', async (req, res) => {
 });
 
 // If you build the client and put the dist in client/dist, serve static files
-app.use(express.static('client/dist'));
+app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
 
 // Add fallback for client-side routing
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'client/dist/index.html'));
+  // Use path relative to project root instead of server directory
+  const indexPath = path.join(__dirname, '..', 'client', 'dist', 'index.html');
+  res.sendFile(indexPath);
 });
 
 // TTS proxy endpoint: accepts { text, format } and forwards to OpenAI TTS endpoint
