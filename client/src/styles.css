@@ -1,0 +1,32 @@
+:root{
+  --bg:#0f1724;
+  --panel:#0b1220;
+  --muted:#9aa4b2;
+  --accent:#7c5cff;
+  --bubble-user:#2b6cb0;
+  --bubble-assistant:#0f1724;
+}
+*{box-sizing:border-box}
+body,html,#root{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto}
+body{background:linear-gradient(180deg,#071124 0%, #071829 100%);color:#e6eef8}
+.app-root{display:flex;height:100vh}
+.sidebar{width:240px;padding:24px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-right:1px solid rgba(255,255,255,0.03)}
+.sidebar-header{display:flex;align-items:center;gap:8px}
+.sidebar h2{margin:0}
+.sidebar .status{color:#6ee7b7;font-size:13px;margin-left:6px}
+.main{flex:1;display:flex;flex-direction:column}
+.chat-root{display:flex;flex-direction:column;height:100%}
+.messages{flex:1;overflow:auto;padding:24px;display:flex;flex-direction:column;gap:12px}
+.message{display:flex}
+.message.user{justify-content:flex-end}
+.message.assistant{justify-content:flex-start}
+.message .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-right:8px;background:linear-gradient(180deg,#0b1220,#0f1724);color:#9fb7ff}
+.message .avatar.user{margin-left:8px;margin-right:0;background:linear-gradient(180deg,#1b3960,#1f4a86);color:white;font-size:12px;padding:6px}
+.bubble{max-width:70%;padding:12px 16px;border-radius:12px;background:linear-gradient(180deg,#071229, #0b1424);box-shadow:0 6px 12px rgba(2,6,23,0.6);white-space:pre-wrap}
+.message.user .bubble{background:linear-gradient(180deg,#1b3960,#1f4a86);color:white}
+.composer{display:flex;padding:16px;border-top:1px solid rgba(255,255,255,0.02);gap:8px}
+.composer textarea{flex:1;min-height:48px;max-height:160px;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:inherit;resize:none}
+.composer .send{background:var(--accent);border:none;padding:10px 16px;border-radius:8px;color:white;cursor:pointer}
+.composer .send:hover{opacity:0.95}
+
+.bubble::after{content:''}

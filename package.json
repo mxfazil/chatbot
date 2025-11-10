@@ -1,0 +1,20 @@
+{
+  "name": "chatbot-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server/index.js",
+    "client:dev": "npm --prefix client run dev",
+    "client:build": "npm --prefix client run build",
+    "dev": "concurrently \"npm run start\" \"npm run client:dev\""
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "ws": "^8.13.0",
+    "undici": "^6.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
