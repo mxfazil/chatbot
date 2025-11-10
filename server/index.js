@@ -64,6 +64,29 @@ fs.access(staticPath, fs.constants.F_OK, (err) => {
   if (err) {
     console.warn(`Static files directory not found at: ${staticPath}`);
     console.warn(`Frontend may not have been built. Please run 'npm run client:build' during deployment.`);
+    
+    // Let's also check what directories do exist
+    const projectRoot = path.join(__dirname, '..');
+    fs.readdir(projectRoot, (readdirErr, files) => {
+      if (!readdirErr) {
+        console.log(`Files and directories in project root (${projectRoot}):`, files);
+        
+        // Check if client directory exists
+        const clientPath = path.join(projectRoot, 'client');
+        fs.access(clientPath, fs.constants.F_OK, (clientErr) => {
+          if (clientErr) {
+            console.log(`Client directory not found at: ${clientPath}`);
+          } else {
+            console.log(`Client directory exists at: ${clientPath}`);
+            fs.readdir(clientPath, (clientReaddirErr, clientFiles) => {
+              if (!clientReaddirErr) {
+                console.log(`Files and directories in client directory:`, clientFiles);
+              }
+            });
+          }
+        });
+      }
+    });
   } else {
     console.log(`Serving static files from: ${staticPath}`);
   }
@@ -76,20 +99,33 @@ app.get('*', (req, res) => {
   // Use path relative to project root instead of server directory
   const indexPath = path.join(__dirname, '..', 'client', 'dist', 'index.html');
   
+  console.log(`Attempting to serve index.html from: ${indexPath}`);
+  
   // Check if file exists before sending
   fs.access(indexPath, fs.constants.F_OK, (err) => {
     if (err) {
       console.error(`Frontend build file not found at: ${indexPath}`);
       console.error(`Current directory: ${__dirname}`);
       console.error(`Project root directory: ${path.join(__dirname, '..')}`);
+      
+      // Let's also check what directories do exist
+      const projectRoot = path.join(__dirname, '..');
+      fs.readdir(projectRoot, (readdirErr, files) => {
+        if (!readdirErr) {
+          console.log(`Files and directories in project root (${projectRoot}):`, files);
+        }
+      });
+      
       // Send a more informative error response
       res.status(404).send(`
         <h1>Frontend Build Not Found</h1>
         <p>The frontend build files were not found at: ${indexPath}</p>
         <p>Please ensure you've run 'npm run client:build' during deployment.</p>
         <p>Check your deployment configuration to make sure the build step is included.</p>
+        <p><small>Debug info: ${new Date().toISOString()}</small></p>
       `);
     } else {
+      console.log(`Successfully found index.html at: ${indexPath}`);
       res.sendFile(indexPath);
     }
   });
