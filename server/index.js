@@ -4,6 +4,7 @@ const WebSocket = require('ws');
 const dotenv = require('dotenv');
 const { fetch } = require('undici');
 const path = require('path');
+const fs = require('fs');
 
 dotenv.config();
 
@@ -55,13 +56,43 @@ app.get('/api/tts-test', async (req, res) => {
 });
 
 // If you build the client and put the dist in client/dist, serve static files
-app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
+const staticPath = path.join(__dirname, '..', 'client', 'dist');
+console.log(`Checking for static files at: ${staticPath}`);
+
+// Check if the static path exists
+fs.access(staticPath, fs.constants.F_OK, (err) => {
+  if (err) {
+    console.warn(`Static files directory not found at: ${staticPath}`);
+    console.warn(`Frontend may not have been built. Please run 'npm run client:build' during deployment.`);
+  } else {
+    console.log(`Serving static files from: ${staticPath}`);
+  }
+});
+
+app.use(express.static(staticPath));
 
 // Add fallback for client-side routing
 app.get('*', (req, res) => {
   // Use path relative to project root instead of server directory
   const indexPath = path.join(__dirname, '..', 'client', 'dist', 'index.html');
-  res.sendFile(indexPath);
+  
+  // Check if file exists before sending
+  fs.access(indexPath, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.error(`Frontend build file not found at: ${indexPath}`);
+      console.error(`Current directory: ${__dirname}`);
+      console.error(`Project root directory: ${path.join(__dirname, '..')}`);
+      // Send a more informative error response
+      res.status(404).send(`
+        <h1>Frontend Build Not Found</h1>
+        <p>The frontend build files were not found at: ${indexPath}</p>
+        <p>Please ensure you've run 'npm run client:build' during deployment.</p>
+        <p>Check your deployment configuration to make sure the build step is included.</p>
+      `);
+    } else {
+      res.sendFile(indexPath);
+    }
+  });
 });
 
 // TTS proxy endpoint: accepts { text, format } and forwards to OpenAI TTS endpoint
